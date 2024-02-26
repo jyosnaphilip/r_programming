@@ -1,0 +1,213 @@
+---
+title: "Lab 09"
+author: "Jyosna Philip"
+date: "2024-01-31"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1.AIM
+ Demonstrate one-way ANOVA.
+ 
+## INTRODUCTION
+
+The one-way analysis of variance (ANOVA), also known as one-factor ANOVA, is an extension of independent two-samples t-test for comparing means in a situation where there are more than two groups. In one-way ANOVA, the data is organized into several groups base on one single grouping variable (also called factor variable).  
+
+# ABOUT DATASET
+The data set is collected from various web resources in order to explore the used cars market and try to build a model that effectively predicts the price of the car based on its parameters (both numerical and categorical)
+The data was scraped in Belarus (western Europe) on the 2nd of December 2019
+
+```{r}
+cars <- read.csv("C:/Users/jyosn/Downloads/archive (6)/cars.csv")
+head(cars)
+```
+```{r}
+unique(cars$engine_type)
+```
+
+Here we will consider the following attributes: engine_type and price_usd
+engine_type is a categorical value which takes values like "gasoline", "diesel" and "electric".
+
+price_usd is a continuous attribute.
+
+## extract variables
+```{r}
+cars$engine_type <- as.factor(cars$engine_type)
+
+```
+
+
+```{r}
+levels(cars$engine_type)
+```
+
+```{r}
+mean(cars$price_usd[cars$engine_type=="diesel"])
+```
+
+
+```{r}
+tapply(cars$price_usd,cars$engine_type,mean)
+```
+
+## datavisualization
+
+```{r}
+boxplot(cars$price_usd~cars$engine_type,main="price vs engine_type",xlab="engine_type",ylab="price",col=rainbow(3))
+
+```
+
+**Defining the null and alternative hypothesis**:  
+Ho: The mean price of cars with different engine types are equal  
+    $\mu$$_1$ = $\mu$$_2$ = $\mu$$_3$    
+    
+H1: The mean price of cars with different engine types are not equal  
+
+2. **Setting the level of significance**:        
+$\alpha$ = 5% i.e., 0.05  
+
+3. **Determining the Test Statistic**:  
+ Because there are three groups that are being tested, we will use ANOVA test.
+ 
+ 
+
+```{r}
+result<-aov(cars$price_usd~cars$engine_type,data=cars)
+result
+```
+
+```{r}
+summary(result)
+```
+**Making Decision **
+Our p-value is less than 0.05. This indicates that average price of at least one of the groups are significantly different from another.
+```{r}
+TukeyHSD(result)
+```
+electric-diesel, gasoline-diesel and gasoline-electric have p-value less than the level of significance, according to the Tukey HSD test. This means that all three group have average price that differ signifcantly from one another..
+
+The graph below visualizes the difference of the same.
+
+```{r}
+plot(TukeyHSD(result, conf.level=.95))
+```
+ **Conclusion**:    
+We can conclude that the average price of cars with different engine types are not equal to each other.
+
+# 2.AIM
+ To demonstrate two-way ANOVA Test,:
+ a) without interaction effect.
+ b) with Interaction effect.
+ 
+# INTRODUCTION
+The two-way ANOVA test is used to compare the effects of two grouping variables (A and B) on a response variable at the same time.
+ 
+
+Here we will consider the following attributes: engine_type,body_type and price_usd.
+a)engine_type is a categorical value which takes values like “gasoline”, “diesel” and “electric”.
+b)price_usd is a continuous attribute.
+c) body_type is a categorical value taking values like "universal","suv" ,"sedan" , "hatchback", "liftback","minivan" , "minibus","van", "pickup","coupe" ,"cabriolet","limousine".
+```{r}
+#extract variables
+engine <- as.factor(cars$engine_type)
+levels(engine)
+
+```
+```{r}
+body<-as.factor(cars$body_type)
+levels(body)
+price<-cars$price_usd
+```
+
+ 
+# WITHOUT INTERACTION EFFECT
+Ha0: There is no significant difference in the price of car with different type of engine.
+$\mu$$_1$ = $\mu$$_2$ = $\mu$$_3$ 
+Ha1: There is a significant difference in the price of car with different type of engine.
+Hb0: There is no significant difference in the price of car based on different body type
+$\mu$$_1$ = $\mu$$_2$ = $\mu$$_3$ = $\mu$$_4$=$\mu$$_5$=$\mu$$_6$=$\mu$$_7$=$\mu$$_8$=$\mu$$_9$=$\mu$$_10$=$\mu$$_11$=$\mu$$_12$
+Hb1: There is a significant difference in the price of car for different body type.
+
+**Setting the level of significance:**
+$\alpha$ = 5% i.e., 0.05
+**Determining the Test Statistic:**
+As there are two categorical attributes with more than two groups that are being
+tested, we will use the ANOVA test.
+
+```{r}
+#without interaction
+result<-aov(price~engine+body,data=cars)
+summary(result)
+
+```
+ **Decision Making**:        
+We see that the P-value is smaller than the level of significance for both engine and body, indicating that the mean price at least one of the groups in both categories are significantly different form another.  
+To understand which of these are not equal we use Tukey test (TukeyHSD).
+
+```{r}
+TukeyHSD(result)
+```
+From this test, we obtain all p-values for different engine_type combinations. They are all less than 0.05. Hence we reject Ha0 and conclude that there is significant difference in price of car by engine_type.
+
+Also the p-value for limousine-cabriolet, limousine-liftback,pickup-cabriolet,minibus-liftback,liftback-coupe,limousine-coupe, minibus-coupe,limousine-hatchback,minibus-liftback,minibus-limousine,minivan-limousine, pickup-limousine,sedan-limousine,suv-limousine universal-limousine, van-limousine, sedan-minivan,van-sedan, pairs have p-value greater than 0.05. 
+Hence these pairs have mean price which are not significantly different.
+For the rest of the pairs, the mean price is significantly different.
+We can reject Hb0 as some of the pairs have shown significant effect on the price due to their body type. 
+
+```{r}
+plot(TukeyHSD(result, conf.level=.95), las = 2)
+```
+**Conclusion**
+A two-way anova test was carried out to test the effect of engine and body type on the price of used car. It is revealed that there is a significant effect on the price due to engine type at all levels.
+It is also shown that there is a significant effect due to certain body types on the price of a used car.
+
+
+# WITH INTERACTION EFFECT
+
+ **Defining the null and alternative hypothesis**:     
+Ha0: There is no significant difference in the price of car with different type of engine.
+Ha1: There is a significant difference in the price of car with different type of engine.
+
+Hb0:  There is no significant difference in the price of car based on different body type.
+Hb1:  There is a significant difference in the price of car based on different body type.
+
+Hc0: There is no interaction effect
+Hc1: There is an interaction effect
+
+**Setting the level of significance**:            
+$\alpha$ = 5% i.e., 0.05   
+
+**Determining the Test Statistic**:    
+As there are two categorical attribute with more than two groups that are being tested, we will use the ANOVA test.
+
+We will now check for difference with interaction effect.
+
+```{r}
+result1<-aov(price~engine_type*body_type,data=cars)
+summary(result1)
+```
+4. **Decision Making**:        
+We see that the P-value is smaller than the level of significance for both engine_type, body_type, and the two combined indicating that at least one of the groups in both categories combined have mean prices which are not equal. Hence we can reject all the H0s.   
+To understand  which of these are not equal we use Tukey's test(TukeyHSD).
+```{r}
+#multiple pairwise comparison test:
+TukeyHSD(result1)
+```
+Among engine types, the p-value for each combination is less than 0.05. Hence  Ha0 is rejected for all combinations.
+Among body_type, the p-value for limousine-cabriolet, limousine-liftback,pickup-cabriolet,minibus-liftback,liftback-coupe,limousine-coupe, minibus-coupe,limousine-hatchback,minibus-liftback,minibus-limousine,minivan-limousine, pickup-limousine,sedan-limousine,suv-limousine universal-limousine, van-limousine, sedan-minivan,van-sedan, pairs have p-value greater than 0.05. 
+For all other pairs, it less than 0.05. Hence we can reject Hb0 for all these pairs.
+
+Among the combined categories, we can see that p-value for pairs like 
+electric:liftback-diesel:cabriolet,diesel:van-electric:hatchback,gasoline:universal-electric:hatchback,diesel:universal-electric:hatchback ,diesel:sedan-electric:hatchback ,gasoline:minivan-electric:hatchback and others have p-value less than 0.05. Hence we reject Hc0 for these pairs and conclude that there is an interaction effect of body type and engine type on the price of cars in these cases.
+
+```{r}
+plot(TukeyHSD(result1, conf.level=.95), las = 2)
+#las indicates the orientation of tickmarks wrt axis. here 2 indicates -always perpendicular to axis.
+```
+
+5. **Conclusion**: 
+Two way anova test with and without interaction effect were done to check the effect of body type and engine type on the price of used cars. results show that there is a significant effect on price of cars due to engine type on all levels. A significant effect on price due to the bosy type is shown only in certain combinations. similarly an interaction effect of body and engine type on the price is also seen in only a certain combinations of the features.
+

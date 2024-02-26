@@ -1,0 +1,102 @@
+---
+title: "Lab 07"
+author: "Jyosna Philip"
+date: "2024-01-09"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# INTRODUCTION
+We aim for the examination of data dispersion within a singular group and the rigorous comparison of variances between two distinct populations. These can be done using chi squared test and f test respectively.
+
+# TESTING VARIANCE OF SINGLE POPULATION  
+To test the variance of single population, chi square test is used. The library required for this is imported.
+
+```{r}
+library(EnvStats)
+```
+# Importing Dataset
+
+# Dataset Description
+
+This dataset contains online shopping data,and details regarding the use of discount coupons.
+```{r}
+online_shopping <- read.csv("C:/Users/jyosn/Downloads/archive (2)/online_shopping.csv")
+online_shopping<- na.omit(online_shopping)
+head(online_shopping)
+tail(online_shopping)
+```
+
+# Target Variable 
+Our target variable is Avg_Price.
+
+# POPULATION
+```{r}
+population=online_shopping$Avg_Price
+```
+```{r}
+pop_var=var(population)
+pop_var
+```
+
+#Sample
+```{r}
+s=sample(population,150,replace=FALSE)
+
+```
+
+# CHI-SQUARE TEST FOR SINGLE MEAN
+ H0: Variance of Avg_Price of all transactions 4000
+ H1: VAriance of Avg_Price of all transactions !=4000
+ 
+```{r}
+varTest(s,alternative = "two.sided",sigma.squared = 4000)
+```
+Since p-value is 0.38 and thus greater than 0.05, we fail to reject H0.
+Hence variance of the population, that is , variance of avg_price of all transactions is 4000.
+
+# CONCLUSION
+We have carried out chi-square test for test of variance for single population. Our p-value came out greater than 0.05 and thus we can conclude that the variance of avg_price of all transactions is 4000.
+
+# TESTING EQUALITY OF VARIANCES
+
+Here our target variables are avg_price of male and females respectively.
+# GETTING POPULATIONS
+```{r}
+popMale=subset(online_shopping,Gender=='M')
+popMale1=popMale$Avg_Price
+popFemale=subset(online_shopping,Gender=='F')
+popFemale1=popFemale$Avg_Price
+```
+# GETTING SAMPLES
+```{r}
+sMale=sample(popMale1,150,replace=TRUE)
+sFemale=sample(popFemale1,150,replace=TRUE)
+```
+
+## COMPARING VARIANCES OF TWO POPULATION
+TWO-SIDED TEST
+H0: Variances of Avg_Price spend by Males and Females are equal
+H1: Variances of Avg_Price spend by Males and Females are not equal
+
+```{r}
+var.test(sMale,sFemale,alternative = "two.sided",conf.level = 0.95)
+```
+p-value is less than 0.05, Hence we reject H0.
+The variances are not equal.
+
+RIGHT-SIDED HYPOTHESIS TEST
+H0: Variances of Avg_Price spend by Males and Females are equal
+H1: Variances of Avg_Price spend by Males is greater than Females
+```{r}
+var.test(sMale,sFemale,alternative = "greater",conf.level = 0.95)
+```
+p-value is 0.016<0.05, Hence we  reject H0. The variance of avg_price spend by males is significantly greater than that of females.
+
+# CONCLUSION
+We used F-Test to compare the variance of two population,here, it was to compare the variance of avg_price spent by males and females. During right-tailed hypothesis test, our p-value was less than 0.05. Hence we can conclude that the variance of avg_price spend by males is significantly greater than that of females.
+
+
+

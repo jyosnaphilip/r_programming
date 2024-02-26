@@ -1,0 +1,110 @@
+---
+title: "Lab 05"
+author: "Jyosna Philip"
+date: "2023-12-19"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## AIM
+To test the equality of two population proportion
+
+## DATASET DESCRIPTION
+This dataset contains information on bone tumors. The data was collected from patients at the Memorial Sloan Kettering Cancer Center (MSKCC). 
+```{r cars}
+Bone_Tumor <- read.csv("C:/Users/jyosn/Downloads/archive (1)/Bone Tumor Dataset.csv")
+
+```
+## ANALYSIS
+```{r}
+head(Bone_Tumor)
+tail(Bone_Tumor)
+```
+## CREATING 2 POPULATIONS
+
+```{r}
+##Population 1
+male<- subset(Bone_Tumor, Sex =="Male")
+
+```
+
+```{r}
+#Population 2
+female<- subset(Bone_Tumor, Sex =="Female")
+```
+
+## TO CHECK HYPOTHESIS 
+
+Taking the Sample
+
+```{r}
+sm=sample(male$Grade,150,replace = FALSE)
+S1=as.data.frame(sm) #to convert to dataframe
+
+sf=sample(female$Grade,150,replace = FALSE)
+S2=as.data.frame(sf)
+S2
+```
+
+
+## COUNT OF THE SAMPLE
+
+```{r}
+library(dplyr)
+count(S1,sm)
+count(S2,sf)
+```
+
+## FIXING PROPORTION
+
+P0: proportion of  High Grade Tumors in Male
+P1: proportion of High Grade Tumors in Female
+## assume the population propotion
+H0: P0 = P1
+H1: P0 != P1
+
+Success = 110 High Grade Tumors in Male
+Success = 28 Current High Grade Tumors in Female
+
+```{r}
+?c
+?prop.test
+```
+
+
+```{r}
+x1=c(110,28)   #x1 has the success rates
+n1=c(150,150)   #n1 has the sample sizes
+prop.test(x1, n1, alternative = "two.sided", conf.level = 0.99)
+```
+We get a very small p-value<0.01.
+Hence we have to reject H0.
+Therefore the true proportion of males and females with high grade bone tumors is not equal.
+We can now move forward to the one sided test.
+
+## ONE SIDED TEST
+
+## RIGHT-SIDED TEST
+H0: P0 = P1
+H1: P0 > P1
+Alternative hypothesis:True Proportion of High grade tumors in males is greater than that of females.
+
+```{r}
+prop.test(x1, n1, alternative = "greater", conf.level = 0.99)
+```
+We get a p-value which is very less than 0.01.
+Hence, we can reject H0 and conclude that that P0>P1.
+
+## Conclusion
+
+Our rejection og null hypothesis in the two-sided test led us to carrying out the right-sided test. P-value obtained was less than 0.01, and so we rejected our null hypothesis. As a result our alternative hypothesis is accepted. Thus, the true proportion of males with high grade bone tumor is more than the true proportion of females with high grade bone tumor.
+
+
+
+
+
+
+ 

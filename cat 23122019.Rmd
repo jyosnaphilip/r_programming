@@ -1,0 +1,302 @@
+---
+title: "cat 2 23122019"
+author: "Jyosna Philip"
+date: "2024-02-17"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+1.Comparative Analysis of Worker Attitudes 
+Dynamic Solutions Ltd., with its head office situated in Kolkata and a branch in Mumbai, aims to introduce a new work plan. To gauge worker attitudes towards this plan, a survey was conducted. Out of a sample of 500 workers in Kolkata, 62% expressed support for the new plan. Conversely, out of a sample of 400 workers in Mumbai, 41% were against it. The Personnel Director seeks to determine if there is a significant difference in the attitudes of workers between the two locations at a 5% significance level. 
+
+# ANSWER 1
+
+**Aim** : To test the equality of proportions.
+
+```{r}
+#importing library
+library(dplyr)
+```
+```{r}
+#finding x
+0.62*500
+(1-0.41)*400
+```
+**Defining Hypothesis**:
+
+Let p1 be the proportion of workers in Kolkota supporting the decision, and p2 be the proportion of workers in Mumbai supporting the decision.
+**H0:** There is no significant difference in the attitude of workers between the two locations
+ p1=p2
+**H1:** There is a significant difference in the attitude of workers between the two locations, 
+p1!=p2
+
+**Significance level:** 
+$\alpha$=0.05
+```{r}
+x<-c(310,236)
+n<-c(500,400)
+```
+```{r}
+#function for testing equality of proportion
+prop.test(x,n,alternative='two.sided',conf.level=0.95)
+```
+We get a p-value of 0.397
+SInce our obtained p-value is greater than the significance level of 0.05, we fail to reject H0.
+Hence, there is no significant difference in the attitude of workers between the two locations.
+
+**Conclusion**:
+A z-test for testing the equality of two proportions was conducted. upon getting a p-value greater than the significance level(0.05), H0 was accepted and concluded that there is no significant difference in the attitude of workers from from the two locations.
+
+
+_____________________________________________________________________________________________________________________________
+
+2.Global Solutions Inc. Satisfaction Analysis Question
+The HR department of Global Solutions Inc Corporation conducted a satisfaction survey among employees to assess job satisfaction levels. The results revealed that 772 employees expressed dissatisfaction with their current roles, 1611 reported moderate satisfaction, and 737 indicated high satisfaction and the remaining employees did not provide satisfaction ratings. However, Global Solutions Inc Corporation's HR policies anticipate a distribution of job satisfaction levels in the ratio of 1:2:1 for dissatisfied, moderately satisfied, and highly satisfied employees respectively. Considering this, analyze whether the observed satisfaction levels align with the expected ratios. Perform a hypothesis test using an appropriate statistical method to determine if there are any notable deviations exist. Based on the test results, draw conclusions about whether further inquiries or actions are necessary to address any notable deviations effectively
+
+# ANSWER 2
+
+**AIM**: To test the goodness of fit of given data.
+
+Given:
+dissatisfied:772
+moderate:1611
+high:737
+
+expected dist-> 1:2:1
+
+Since we have to analyse whether the given data aligns with a specified distribution, we have to use chi-square test for testing goodness of fit.
+
+**Setting Hypotheses:**
+
+**H0:** The observed satisfcation levels aligns with the expected ratios.
+**H1**: The observed satisfcation levels doesn't align with the expected ratios.
+
+**Significance level:**
+$\alpha$=0.05
+
+```{r}
+observed<-c(772,1611,737)
+probability_ratio<-c(1/4,1/2,1/4)
+```
+
+```{r}
+chisq.test(observed,p=probability_ratio)
+```
+
+We get a p-value of 0.1275. This is more than our level of significance. Hence we fail to reject H0 and can conclude that the observed satisfcation levels aligns with the expected ratios.
+
+**Conclusion**:
+A chi square test for testing goodness of fit was conducted. Upon getting a p-value greater than the significance level(0.05), H0 was accepted and concluded that the observed satisfcation levels aligns with the expected ratios.
+
+_________________________________________________________________________________________________________________________________
+
+3. Statistical Analysis of Healthcare Data
+a) Using the Health Care dataset, examine whether individuals admitted under emergency conditions have an average bill of 25,500, based on a suitable sample size, with a significance level of 1%.
+b) Investigate whether there is equal variance in billing amounts among individuals with Diabetes and Hypertension. Utilize a suitable statistical test for validation and draw meaningful inferences from the results.
+
+# ANSWER 3
+
+**Part (a)**
+
+**Aim:** To carry out z-test for test of single mean.
+
+
+**Setting Hypotheses for Two-tailed test:**
+
+**H0**: The average bill amount of emergency patients is 25,500
+i.e $\mu$=25,500
+**H1**: The average bill amount of emergency patients is not 25,500
+i.e $\mu$!=25,500
+
+**Significance level:**
+
+$\alpha$=0.01
+```{r}
+#IMPORTING DATASET
+library(readr)
+health <- read_csv("C:/Users/jyosn/Downloads/healthcare_dataset.csv",show_col_types = FALSE)
+summary(health)
+```
+```{r}
+head(health)
+```
+```{r}
+# getting a subset  containing only emergency patients
+emergency<-subset(health,health$`Admission Type`==c('Emergency'))
+```
+```{r}
+#taking a sample of billing amount from the newly obtained subset emergency
+sample_emergency<-sample(emergency$`Billing Amount`,200,replace=FALSE)
+```
+```{r}
+#standard deviation of sample
+sample_sd<-sd(sample_emergency)
+```
+
+```{r}
+library(BSDA)
+```
+```{r}
+z.test(x=sample_emergency,alternative='two.sided',mu=25500,conf.level=0.99,sigma.x=sample_sd)
+```
+We obtain a p-value=0.5902, which is greater than our significance level of 0.01.
+Hence we fail to reject H0 and conclude that the average billing amount of emergency patients is 25500
+
+**Conclusion:**
+A z test for test for single mean was conducted. Upon getting a p-value greater than the significance level(0.01), H0 was accepted and concluded that the average billing amount of emergency patients is 25500.
+
+
+**Part b)**
+**Aim**: To carry out test for equality of variances.
+
+We need to use F-test for comparing variance of billing amount for patients with diabetes and hypertension.
+
+**Setting Hypotheses:**
+
+**H0:** There is no significant difference in the variance of billing amount of patients with diabetes and hypertension.
+**H1:**There is significant difference in the variance of billing amount of patients with diabetes and hypertension.
+
+**Significance level:**
+$\alpha$=0.05
+
+```{r}
+#importing library
+library(EnvStats)
+```
+```{r}
+#extracting population with diabetes
+diabetes<-subset(health,health$`Medical Condition`==c('Diabetes'))
+#extracting population with diabetes
+hypertension<-subset(health,health$`Medical Condition`==c('Hypertension'))
+```
+
+```{r}
+#taking samples ffrom the respective populations
+sample_diabetes<-sample(diabetes$`Billing Amount`,200,replace=FALSE)
+sample_hypertension<-sample(hypertension$`Billing Amount`,200,replace=FALSE)
+```
+
+```{r}
+var.test(x=sample_diabetes,y=sample_hypertension,conf.level=0.95,alternative='two.sided')
+```
+We obtain a p-value of 0.8869. 
+Since our p-value is greater than the level of significance, we fail to reject H0 and conclude that the variance of billing amount of patients with diabetes and hypertension do not have a significant difference.
+
+**Conclusion:**
+An F-test for test for equality if variances was conducted. Upon getting a p-value greater than the significance level(0.05), H0 was accepted and concluded that the variance of billing amount of patients with diabetes and hypertension do not have a significant difference.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+4.Exploring the Impact of Nitrogen Content in Soil and Crop Types on Soil pH
+Test the significance of the ratio of Nitrogen (N) content in soil and the type of crop label on the average pH level. 
+If the pH level is influenced by the ratio of nitrogen content in soil and the type of crop, conduct appropriate tests to determine which specific ratios of nitrogen content in soil and crop types result in differences.
+
+# ANSWER 4
+
+**Aim:** To carry out two-way ANOVA between the required target variables.
+
+
+
+```{r}
+#importing dataset
+crop <- read_csv("C:/Users/jyosn/Downloads/Crop_recommendation.csv",show_col_types = FALSE)
+crop<-na.omit(crop)
+summary(crop)
+```
+```{r}
+head(crop)
+```
+Here our target variables are N and label.
+We need to see their effect on the attribute pH.
+```{r}
+nitro<-as.factor(crop$N)
+levels(nitro)
+c_label<-as.factor(crop$label)
+levels(c_label)
+```
+
+Since there are more than one category in each of the target variables, we have to use two way ANOVA.
+
+**TWO WAY ANOVA WITHOUT INTERACTION EFFECT**
+
+**Hypotheses**:
+
+**H0a:** There is no significant effect of ratio of nitrogen content in soil on average soil pH level.
+**H1a**: There is a significant effect of ratio of nitrogen content in soil on average soil pH level.
+
+**H0b:** There is no significant effect of crop label on average soil pH level.
+**H1b**: There is a significant effect of crop label on average pH of soil.
+
+**Significance level :**
+$\alpha$: 0.05
+
+```{r}
+#extracting target variables
+ph<-crop$ph
+```
+
+```{r}
+result1<-aov(ph~nitro+c_label,data=crop)
+result1
+```
+```{r}
+summary(result1)
+```
+Since we have got both p-values less than our significance level of 0.05, we can reject both Ha0 and Hb0. 
+Hence there is atleast atleast some pairs of effect have a signifcant effect on ph levels.
+
+To find out which of the types have an effect, we carry out Tukey HSD test.
+```{r}
+#TukeyHSD(result1)
+```
+
+We can see that, for certain pairs of nitrogen ratios, i.e., 57-0,59-0,52-1,57-1,59-1 have a p-value less than the significance level which is 0.05.Hence between these pairs, we can say that there is a significant effect on pH level of soil.
+Also for certain pairs of crop labels like, blackgram-apple, chickpea-apple, coffee-apple, cotton-apple, jute-apple, lentil-apple, 
+mothbeans-apple, mungbean-apple, muskmelon-apple, orange-apple, papaya-apple, pomegranate-apple, rice-apple, watermelon-apple, blackgram-banana, chickpea-banana, coffee-banana, cotton-banana, jute-banana, lentil-banana, mothbeans-banana, mungbean-banana, muskmelon-banana, orange-banana, papaya-banana, pomegranate-banana, rice-banana, watermelon-banana, coconut-blackgram, grapes-blackgram, kidneybeans-blackgram, maize-blackgram, mango-blackgram, muskmelon-blackgram, papaya-blackgram,pigeonpeas-blackgram,rice-blackgram,coconut-chickpea, cotton-chickpea, grapes-chickpea, jute-chickpea,kidneybeans-chickpea,maize-chickpea,mango-chickpea,muskmelon-chickpea,papaya-chickpea, pigeonpeas-chickpea, pomegranate-chickpea,rice-chickpea,watermelon-chickpea,coffee-coconut ,cotton-coconut,jute-coconut 
+These labels have p-value less than 0.05 hence we can say that these pairs have a signifcant effect on ph levels of soil
+
+
+
+**TWO WAY ANOVA WITH INTERACTION EFFECT**
+
+**Hypotheses**:
+
+**H0a:** There is no significant effect of ratio of nitrogen content in soil on average soil pH level.
+**H1a**: There is a significant effect of ratio of nitrogen content in soil on average soil pH level.
+
+**H0b:** There is no significant effect of crop label on average soil pH level.
+**H1b**: There is a significant effect of crop label on average pH of soil.
+
+**H0c**: There is no interaction effect between nitrogen level and crop label.
+**H1c**:There is an interaction effect between nitrogen level and crop label
+
+**Significance level :**
+$\alpha$: 0.05
+
+```{r}
+#extracting target variables
+ph<-crop$ph
+```
+
+
+
+```{r}
+result2<-aov(ph~nitro*c_label,data=crop)
+result2
+```
+```{r}
+summary(result2)
+```
+The p-values obtained for effect within nitrogen ratios and effect within labels are less than 0.05 , as we have got in the above test without interaction effect. So just like the above test, we can conclude by rejecting H0a and H0b and say that there is atleast two pairs which have a significant effect on soil ph in both the categories.
+For interaction effect, we get a p-value of more than 0.05, hence, we fail to reject Hc0. So we can conclude that there is no interaction effect between nitrogen ratios and crop labels on ph level of soil.
+
+Tukey HSD test to identify those pairs within nitro category and those pairs within the crop label category that have a significant effect on soil ph will yield the same result as that obtained in two-way without interaction.
+
+**Conclusion:**
+Two way anova was done with and without interaction to check the effect of nitrogen ratios and crop labels on soil ph. in two way anova without interaction, we obtain both p-values less than 0.05 and hence reject both null hypotheses. Further investigation with Tukey HSD test yielded those pairs that had  a significant effect on ph of soil.
+In the two way ANOVA with interaction, we obtained the same results as that in two way ANOVA without interaction. Additionally we also obtained a p-value greater than 0.05 for interaction effect. Hence we fail to reject Hc0 and thus conclude that there is no interaction effect between nitrogen ratios and crop labels on ph level of soil.
+

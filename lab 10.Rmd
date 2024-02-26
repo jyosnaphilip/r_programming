@@ -1,0 +1,116 @@
+---
+title: "LAB 10"
+author: "Jyosna Philip"
+date: "2024-02-06"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# AIM
+ To demonstrate two-way ANOVA Test,:
+ a) without interaction effect.
+ b) Interaction effect.
+ 
+# INTRODUCTION
+The two-way ANOVA test is used to compare the effects of two grouping variables (A and B) on a response variable at the same time.
+ 
+```{r}
+cars <- read.csv("C:/Users/jyosn/Downloads/archive (6)/cars.csv")
+head(cars)
+```
+
+**About the dataset**
+The dataset is collected from various web resources in order to explore the used cars market and try to build a model that effectively predicts the price of the car based on its parameters (both numerical and categorical) The data is scraped in Belarus (western Europe) on the 2nd of December 2019.
+
+Here we will consider the following attributes: engine_type,body_type and price_usd.
+a)engine_type is a categorical value which takes values like “gasoline”, “diesel” and “electric”.
+b)price_usd is a continuous attribute.
+c) body_type is a categorical value taking values like "universal","suv" ,"sedan" , "hatchback", "liftback","minivan" , "minibus","van", "pickup","coupe" ,"cabriolet","limousine".
+```{r}
+#extract variables
+engine_type <- as.factor(cars$engine_type)
+levels(cars$engine_type)
+body_type <- as.factor(cars$body_type)
+levels(cars$body_type)
+price<-cars$price_usd
+```
+
+ 
+# WITHOUT INTERACTION EFFECT
+H0: There is no significant difference in the price of car with different type of engine.
+$\mu$$_1$ = $\mu$$_2$ = $\mu$$_3$ 
+H1: There is a significant difference in the price of car with different type of engine.
+H0: There is no significant difference in the price of car based on different body type
+$\mu$$_1$ = $\mu$$_2$ = $\mu$$_3$ = $\mu$$_4$=$\mu$$_5$=$\mu$$_6$=$\mu$$_7$=$\mu$$_8$=$\mu$$_9$=$\mu$$_10$=$\mu$$_11$=$\mu$$_12$
+H1: There is a significant difference in the price of car for different body type.
+
+**Setting the level of significance:**
+$\alpha$ = 5% i.e., 0.05
+**Determining the Test Statistic:**
+As there are two categorical attributes with more than two groups that are being
+tested, we will use the ANOVA test.
+
+```{r}
+#without interaction
+result<-aov(price~engine_type+body_type,data=cars)
+summary(result)
+
+```
+ **Decision Making**:        
+We see that the P-value is smaller than the level of significance for both engine_type and body_type, indicating that the mean price at least one of the groups in both categories are not equal.  
+To understand which of these are not equal we use TukeyHSD.
+
+```{r}
+TukeyHSD(result)
+```
+From this test, we obtain all p-values for engine_type means less than 0.05. Hence we reject H0,there is significant difference in price of car by engine_type.
+Also the p-value for limousine-cabriolet, limousine-liftback,pickup-cabriolet,minibus-liftback,liftback-coupe,limousine-coupe, minibus-coupe,limousine-hatchback,minibus-liftback,minibus-limousine,minivan-limousine, pickup-limousine,sedan-limousine,suv-limousine universal-limousine, van-limousine, sedan-minivan,van-sedan, pairs have p-value greater than 0.05. Hence these pairs have mean price which are not significantly different.
+For the rest of the pairs, the mean price is different.
+
+```{r}
+plot(TukeyHSD(result, conf.level=.95), las = 2)
+```
+**Conclusion**
+Hence there is a significant difference in price of car with different body_type or engine_type.
+
+# WITH INTERACTION EFFECT
+
+ **Defining the null and alternative hypothesis**:     
+H0: There is no significant difference in the price of car with different type of engine.
+H1: There is a significant difference in the price of car with different type of engine.
+
+H0:  There is no significant difference in the price of car based on different body type.
+H1:  There is a significant difference in the price of car based on different body type.
+
+H0: There is no interaction effect
+H1: There is an interaction effect
+
+**Setting the level of significance**:            
+$\alpha$ = 5% i.e., 0.05   
+
+**Determining the Test Statistic**:    
+As there are two categorical attribute with more than two groups that are being tested, we will use the ANOVA test.
+
+We will now check for difference with interaction effect.
+
+```{r}
+result1<-aov(price~engine_type*body_type,data=cars)
+summary(result1)
+```
+4. **Decision Making**:        
+We see that the P-value is smaller than the level of significance for both Occupation, Education, and the two combined indicating that at least one of the groups in both categories combined have mean prices which are not equal.    
+To understand  which of these are not equal we use TukeyHSD.
+```{r}
+#multiple pairwise comparison test:
+TukeyHSD(result1)
+```
+We see a majority of the combined categories are not significantly different from the level of significance as the p-values in the engine_type:body_type  table.  
+```{r}
+plot(TukeyHSD(result1, conf.level=.95), las = 2)
+```
+
+5. **Conclusion**:  
+We can conclude that there is a significant difference in the price of car with different engine_type and body_type, however,there is an interaction effect between the two categorical attributes.

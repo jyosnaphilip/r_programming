@@ -1,0 +1,115 @@
+---
+title: "Lab 08"
+author: "Jyosna Philip"
+date: "2024-01-23"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# OBJECTIVE
+ To carry out the goodness of fit test using chi-square distribution.
+ 
+ Question-1:
+For example, we collected wild tulips and found that 71 were red, 40 were yellow and 29 were
+white.
+1. Are these colors equally common? Find the expected values and residuals?
+2. Suppose that, in the region where you collected the data, the ratio of red, yellow and
+white tulip is 4:3:1. Find the expected values and residuals?
+
+Ans 1:
+H0: The colors are equally common
+H1: The colors are not equally common.
+
+```{r}
+observed=c(71,40,29)
+expected=c(1/3,1/3,1/3)
+m=chisq.test(observed,p=expected)
+m
+```
+We get the chi-squared value as 20.329
+p-value is very small and smaller than 0.05. Hence we can reject H0 and conclude that the colors are not equally common.
+
+```{r}
+m$expected
+```
+the expected value for each colors is given above.
+```{r}
+m$residuals
+```
+Hence we obtain the resuiduals as 3.56, -0.97 and -2.58 for red,yellow and white tulips respectively.
+
+Conclusion:
+Since p-value is less than 0.05, H0 should be rejected and we get the inference that the colors arent common. 
+
+Ans 2.
+H0: The sample aligns with the given ratio
+H1: The sample doesnt align with the given ratio
+```{r}
+observed=c(71,40,29)
+expected=c(4/8,3/8,1/8)
+m=chisq.test(observed,p=expected)
+
+```
+
+
+```{r}
+m$expected
+
+```
+The above values are the expected value for red,yellow and white tulips respectively.
+```{r}
+m$residuals
+```
+The residuals for red,yellow and white tulips respectively is 0.119, -1.72,and 2.74.
+
+Question -2:
+Avni is testing an octahedral die to see if it is biased. The observed results are given:
+7 10 11 9 12 10 14 7
+
+Test the hypothesis that the die is fair.
+
+Ans 
+
+H0: The die is fair
+H1: The die is not fair
+
+```{r}
+expected=c(1/8,1/8,1/8,1/8,1/8,1/8,1/8,1/8)
+observed=c(7,10,11,9,12,10,14,7)
+m=chisq.test(observed,p=expected)
+m
+```
+We obtain the chi-square value as 4. 
+p-value is 0.779. as this value is greater than 0.05, we fail to reject H0.
+Hence the die is fair.
+
+Conclusion: As the p-value is greater than 0.05, we can conclude that the die is fair.
+
+Question- 3:
+When randomly selecting a card from a deck with replacement, are we equally likely to select a
+heart, diamond, spade, and club?I randomly selected a card from a standard deck 40 times with
+replacement. I pulled 13 hearts, 8 diamonds, 8 spades, and 11 clubs.
+
+Ans
+H0: It is equally likely to get a heart,diamond, spade and a club.
+H1: It is not equally likely to get a heart,diamond, spade and a club.
+
+```{r}
+expected=c(1/4,1/4,1/4,1/4)
+observed=c(13,8,8,11)
+m=chisq.test(observed,p=expected)
+m
+```
+ We obtain the chi-square value as 1.8 and p-value as 0.614
+ as we get a high p-value which is greater than 0.05, we fail to reject H0.
+ Hence it is equally like to get  heart,diamond, spade and a club.
+ 
+ Conclusion: Since p-value>0.05, we fail to reject H0.
+ Hence it is equally like to get  heart,diamond, spade and a club.
+ 
+ 
+
+ 

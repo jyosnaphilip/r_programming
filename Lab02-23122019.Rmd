@@ -1,0 +1,80 @@
+---
+title: "Lab 02"
+author: "Jyosna Philip"
+date: "2023-12-04"
+output: word_document
+---
+# Dataset Description
+
+This dataset includes a record of the date, time, location, depth, magnitude, and source of every earthquake with a reported magnitude 5.5 or higher from 1965-2016.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+earthquakes <- read.csv("C:/Users/jyosn/Downloads/database.csv/database.csv")
+head(earthquakes)
+tail(earthquakes)
+```
+
+Our target variable is Magnitude i.e, the magnitude of the Earthquake.
+```{r}
+dim(earthquakes)
+
+```
+Thus there are 23412 observations(rows) and 21 attributes(columns).
+```{r}
+mean(earthquakes$Magnitude)
+sd(earthquakes$Magnitude)
+```
+Thus the population mean is 5.88 and population sd is 0.42.
+
+# Sample
+```{r}
+s=sample(earthquakes$Magnitude,100,replace=FALSE)
+mean(s)
+```
+```{r}
+sd_s=sd(s)
+sd_s
+```
+Thus the sample population mean is 5.81 and sample sd is 0.35.
+
+## TWO SIDED HYPOTHESIS TEST
+# To test whether the avg earthquake magnitude is 5.81 or not.
+
+H0: mean=5.86
+H1: mean!=5.86
+```{r}
+library(BSDA)
+z.test(x=s,alternative="two.sided",mu=5.86,sigma.x=sd_s,conf.level=0.95)
+```
+The z-value is -1.43 which is greater than the critical value at 0.95 confidence level.
+Also p-value is 0.1528 which is greater than than 0.05, hence we fail to reject H0.
+Conclusion: The mean magnitude of Earthquakes from 1965-2016(if they were above 5.5) is 5.86 .
+
+# LEFT-TAILED HYPOTHESIS TEST
+ To test whether the average magnitude of earthquakes is 5.86 or less than it.
+H0: mean=5.86
+H1: mean<5.86
+
+```{r}
+z.test(x=s,alternative="less",mu=5.86,sigma.x=sd_s,conf.level=0.95)
+```
+The z-value is -1.43 which is greater than -1.46. -1.46 is the critical value at 5% significance level for left-tailed test. Also p-value is 0.076 which is greater than than 0.05. Hence we fail to reject H0.
+Conclusion: The mean magnitude of Earthquakes from 1965-2016(if they were above 5.5) is 5.86 .
+
+# RIGHT-TAILED HYPOTHESIS TEST
+ To test whether the average magnitude of earthquakes is 5.86 or greater than it.
+H0: mean=5.86
+H1: mean>5.86
+
+```{r}
+z.test(x=s,alternative="greater",mu=5.86,sigma.x=sd_s,conf.level=0.95)
+```
+The z-value is -1.43 which is less than 1.46. 1.46 is the critical value at 5% significance level for right-tailed test. Also p-value is 0.924 which is  much greater than than 0.05. Hence we fail to reject H0.
+Conclusion: The mean magnitude of Earthquakes from 1965-2016(if they were above 5.5) is 5.86 .
+
+

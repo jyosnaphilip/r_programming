@@ -1,0 +1,148 @@
+---
+title: "Lab 04"
+author: "Jyosna Philip"
+date: "2023-12-15"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## AIM
+Test for proportion of single population (large samples) 
+
+
+
+
+## DATASET DESCRIPTION
+This dataset contains information on bone tumors. The data was collected from patients at the Memorial Sloan Kettering Cancer Center (MSKCC). 
+```{r cars}
+Bone_Tumor <- read.csv("C:/Users/jyosn/Downloads/archive (1)/Bone Tumor Dataset.csv")
+
+```
+## ANALYSIS
+```{r}
+head(Bone_Tumor)
+tail(Bone_Tumor)
+```
+```{r}
+dim(Bone_Tumor)
+```
+This dataset has 9 attributes and 500 rows.
+
+```{r}
+summary(Bone_Tumor)
+```
+All attributes are of character type except age. Hence, from initial analysis we cannot say anything about this dataset.
+```{r}
+library(colorDF)
+c=colorDF(Bone_Tumor, theme="bw")
+c
+```
+## Selecting a sample
+```{r}
+grade_s=sample(Bone_Tumor$Grade,150,replace=FALSE)
+class(grade_s)
+```
+```{r}
+?count
+```
+count works when the first variable is a dataframe.
+
+```{r}
+library(dplyr)
+
+
+```
+```{r}
+#Another way of taking a sample
+grade_s=sample(1:nrow(Bone_Tumor),150,replace=FALSE)
+grade_s
+class(grade_s)
+```
+Above are serial numbers, so basicaly we get the entire row for study.
+```{r}
+new<- Bone_Tumor[grade_s,3] # 3 represents col number, so this extracts all values from 3 rd column based on the row numbers in grade_s
+new
+class(new)
+```
+
+```{r}
+#Converting sample to dataframe
+df<- Bone_Tumor[grade_s,]
+df
+class(df)
+```
+
+Target variable=Grade of Bone tumor
+```{r}
+count(df,Grade)
+
+```
+```{r}
+count(df,Grade,Sex)
+
+```
+## Sample Proportion
+```{r}
+#proportion=x/n
+63/150
+```
+Sample proportion of high grade tumors is 0.42.
+
+## Setting Hypothesis
+P0:Proportion of high grade tumors
+# Assuming population proportion
+H0: P0 = 0.45
+H1: P0! = 0.45
+```{r}
+?prop.test
+```
+
+
+```{r}
+x=63
+n=150
+prop.test(x,n,p=0.45,alternative="two.sided",conf.level = 0.99)
+```
+Since p>0.01, We fail to reject H0.
+Therefore proportion of high grade tumors in the population is 0.45.
+## VISUALIZATION
+
+```{r}
+library(ggplot2)
+?ggplot2
+
+ggplot(Bone_Tumor,aes(x=Grade))+geom_bar()
+
+ggplot(Bone_Tumor,aes(x=Grade,fill=Sex))+geom_bar(colour="yellow")
+```
+```{r}
+?geom_bar
+?aes
+```
+## BINOM TEST
+
+```{r}
+?binom.test
+binom.test(x, n, p = 0.45,alternative = "two.sided",conf.level = 0.99)
+```
+
+
+## ALTERNATIVE METHOD TO GET SAMPLE
+
+```{r}
+
+samp=sample(Bone_Tumor$Grade,150,replace = FALSE)
+
+class(samp)
+
+g<-as.data.frame(samp)
+g
+
+
+count(g,samp)
+```

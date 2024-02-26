@@ -1,0 +1,121 @@
+---
+title: "Lab 03"
+author: "Jyosna Philip"
+date: "2023-12-07"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Test of equality of two means when known σ.
+# Dataset
+Description: the data provides rating for samples of Arabica coffee from many places.
+```{r}
+
+arabica_data_cleaned <- read.csv("C:/Users/jyosn/Downloads/arabica_data_cleaned.csv")
+
+```
+
+```{r}
+dim(arabica_data_cleaned)
+```
+There are 1311 entries(rows) and 43 attributes(columns).
+```{r}
+head(arabica_data_cleaned)
+tail(arabica_data_cleaned)
+
+```
+# Taking 'Brazil' as target 1 variable
+```{r}
+target1<-subset(arabica_data_cleaned,Country.of.Origin==c("Brazil"))
+
+```
+# Taking 'Colombia' as target 2 variable
+```{r}
+target2<-subset(arabica_data_cleaned,Country.of.Origin==c("Colombia"))
+```
+ ## Mean and SD of Target 1 Population
+ 
+```{r}
+mean_pop1=mean(target1$Flavor)
+mean_pop1
+sd_pop1=sd(target1$Flavor)
+sd_pop1
+
+```
+ Population Mean of Brazilian coffee Flavor is 7.57 and population standard deviation is 0.277.
+
+ ## Mean and SD of Target 2 Population
+ 
+  
+```{r}
+mean_pop2=mean(target2$Flavor)
+mean_pop2
+sd_pop2=sd(target2$Flavor)
+sd_pop2
+
+```
+Population Mean of Colombian coffee Flavor is 7.57 and population standard deviation is 0.277.
+
+# Sample of Target 1 Population
+
+```{r}
+sample1=sample(target1$Flavor,100,replace=FALSE)
+mean(sample1)
+sd1=sd(sample1)
+sd1
+```
+Mean and sd of target 1 sample is 7.48 and 0.39 respectively.
+
+# Sample of Target 2 Population
+
+```{r}
+sample2=sample(target2$Flavor,100,replace=FALSE)
+mean(sample2)
+sd2=sd(sample2)
+sd2
+```
+Mean and sd of target 1 sample is 7.62 and 0.31 respectively.
+
+IMPORTING BSDA LIBRARY FOR Z TEST FUNCTION.
+```{r}
+library(BSDA)
+```
+
+
+# TWO TAILED TEST
+Two check if the mean flavor value of Brazilian and Colombioan coffee  are same.
+H0: mu1=mu2
+H1: mu1!=mu2
+```{r}
+z.test(x=sample1,y=sample2,alternative = "two.sided",mu=0,sigma.x = sd1,sigma.y=sd2,conf.level = 0.95)
+```
+Interpretation: z=-1.31. as it is greater than -1.96(the critical value at 5% significance level), and since p-value=0.299 is greater than 0.05 ,we fail to reject H0.
+Hence the difference of mean value of Flavour and Aroma rating atrributes of the Arabica coffee is not statistically significant.
+
+# ONE-TAILED TEST(Left-tailed)
+
+To check if mean flavor rating is less than aroma ratings.
+H0: mu1=mu2
+H1: mu1<mu2
+```{r}
+z.test(x=sample1,y=sample2,alternative = "less",mu=0,sigma.x = sd1,sigma.y=sd2,conf.level = 0.95)
+```
+Interpretation: z=-1.04. as it is greater than -1.64(the critical value at 5% significance level), and since p-value=0.14 is greater than 0.05 ,we fail to reject H0.
+Hence the difference of mean value of Flavour and Aroma rating atrributes of the Arabica coffee is not statistically significant.
+
+# ONE-TAILED TEST(Right-tailed)
+
+To check if mean flavor rating is greater than aroma ratings.
+H0: mu1=mu2
+H1: mu1>mu2
+```{r}
+z.test(x=sample1,y=sample2,alternative = "greater",mu=0,sigma.x = sd1,sigma.y=sd2,conf.level = 0.95)
+```
+Interpretation: z=-1.04. as it is less than 1.64(the critical value at 5% significance level), and since p-value=0.85 is greater than 0.05 ,we fail to reject H0.
+Hence the difference of mean value of Flavour and Aroma rating atrributes of the Arabica coffee is not statistically significant.
+
+

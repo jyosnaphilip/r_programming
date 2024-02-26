@@ -1,0 +1,255 @@
+---
+title: "Lab 01"
+author: "Jyosna Philip"
+date: "2023-11-20"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Sampling Distribution and Standard Error
+
+```{r, include=FALSE}
+#the basic
+#ctrl+enter to run the chunk
+#c stands fr concatenate
+a=c(3,5)
+
+```
+## AIM: To obtain the sampling distribution and the Standard Error
+
+## Dataset Description: 
+The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+
+# ANALYSIS
+```{r}
+#dataset
+ToothGrowth
+
+
+```
+```{r}
+dim(ToothGrowth)
+```
+Hence the ToothGrowth dataset has 60 observations and 3 variables.
+```{r}
+head(ToothGrowth) #to print first six observation
+```
+```{r}
+tail(ToothGrowth) # get last six observations
+```
+```{r}
+head(ToothGrowth)
+tail(ToothGrowth)
+```
+# DESCRIPTIVE STATISTICS    
+```{r}
+summary(ToothGrowth)
+```
+Therefore, the variable len varies from 4.20 to 33.9. Median length is 19.25. 
+
+```{r}
+# To find the distribution of length
+hist(ToothGrowth$len,xlab = "Tooth Length",ylab = "frequency", main = "Histogram of Tooth Length", col="purple")
+```
+
+```{r}
+#finding standard deviation
+sd(ToothGrowth$len)
+```
+A standard deviation close to zero indicates that data points are close to the mean. Here,the standard deviation obtained is 7.64 which indicates that the data points are not close to mean.
+
+# POPULATION
+
+```{r}
+population = ToothGrowth$len
+population 
+```
+## SAMPLE OF SIZE=10
+
+```{r}
+samplesize1=10
+#Choosing a sample of size 10 from the population using simple random sampling with replacement technique
+s1=sample(population , samplesize1, replace = TRUE)
+s1
+```
+```{r}
+mean(s1)
+
+```
+Mean of sample 1 is 16.9
+```{r}
+sd(s1)
+```
+Standard deviation of sample 1 is 5.40
+
+### STANDARD ERROR OF SAMPLE1
+```{r}
+print(sd(s1)/sqrt(samplesize1)) #gets standard error
+```
+
+### SAMPLING DISTRIBUTION OF SAMPLE 1
+
+```{r}
+hist(s1,xlab="Sample values",ylab="frequency",main="HISTOGRAM OF SAMPLE1")
+```
+We can observe that this graph doesn't give a great idea about how the sample is distributed,   so we increase the sample size to 15.
+
+## SAMPLE OF SIZE=15   
+```{r}
+#choosing 15 observations in the sample
+samplesize2=15
+#sample
+#Choosing a sample of size 15 from the population using simple random sampling with replacement technique
+s2=sample(population , samplesize2, replace = TRUE) 
+s2
+```
+
+```{r}
+mean(s2) #to get mean
+sd(s2)
+```
+
+Standard deviation of sample 2 is not close to 0.
+
+## STANDARD ERROR
+```{r}
+print(sd(s2)/sqrt(samplesize2)) #gets standard error
+```
+The standard error is
+
+### SAMPLING DISTRIBUTION OF SAMPLE 2
+
+```{r}
+#Find the sampling distribution of sample 2
+hist(s2, xlab="Sample value", ylab= "frequency", main="SAMPLING DISTRIBUTION OF SAMPLE 2")
+```
+We can observe that this graph also doesn't give a great idea about how the sample is distributed, so we use replicate function to replicate the statistic.
+
+
+# SAMPLING DISTRIBUTION OF MEAN USING REPLICATE() FUNCTION
+## SAMPLE SIZE=10
+```{r}
+#replicate() function in R is used to evaluate an expression N number of times repeatedly.
+#Here it is replicated 1000 times.
+samp_dist1=replicate(1000,mean(sample(ToothGrowth$len,10,replace=TRUE)))
+head(samp_dist1)
+```
+
+```{r}
+#Finding sampling distribution using histogram
+hist(samp_dist1, xlab="Mean", ylab= "Frequency", main="SAMPLING DISTRIBUTION OF MEAN",sub="{SAMPLE SIZE=10}")
+```
+
+```{r}
+#VARIANCE
+var(samp_dist1)
+#STANDARD ERROR
+sd(samp_dist1)
+```
+The variance and sampling distribution of mean is 
+
+## SAMPLE SIZE=20
+```{r}
+samp_dist2=replicate(1000,mean(sample(ToothGrowth$len,20,replace=TRUE)))
+head(samp_dist2)
+
+```
+
+```{r}
+#Finding sampling distribution using histogram
+hist(samp_dist2, xlab="Mean", ylab= "Frequency", main="SAMPLING DISTRIBUTION OF MEAN",sub="{SAMPLE SIZE=20}")
+
+```
+
+
+```{r}
+#VARIANCE
+var(samp_dist2)
+#STANDARD ERROR
+sd(samp_dist2)
+```
+The variance and standard error are respectively. This is less than the values obtained for sample size=10.
+
+## SAMPLE SIZE=30
+
+```{r}
+samp_dist3=replicate(1000,mean(sample(ToothGrowth$len,30,replace=TRUE)))
+head(samp_dist3)
+```
+
+```{r}
+#Finding sampling distribution using histogram
+hist(samp_dist3, xlab="Mean", ylab= "Frequency", main="SAMPLING DISTRIBUTION OF MEAN",sub="{SAMPLE SIZE=30}")
+```
+
+```{r}
+#VARIANCE
+var(samp_dist3)
+#STANDARD ERROR
+sd(samp_dist3)
+```
+The variance and standard error are respectively. this is less than the values obtained for sample size=20. Hence, it is clear from the result that as the sample size increases the variance decreases. It
+is known that the variance is inversely proportional to the precision. Hence, it can be concluded that precision increases as sample size increases.
+
+# SAMPLING DISTRIBUTION OF STANDARD DEVIATION
+
+## SAMPLE SIZE=10
+```{r}
+samp_dist_sd1=replicate(1000,sd(sample(ToothGrowth$len,10,replace=TRUE)))
+head(samp_dist_sd1)
+```
+
+```{r}
+#histogram of samp_dist
+hist(samp_dist_sd1,xlab="s.d",ylab="Frequency",main="SAMPLING DISTRIBUTION OF S.D",sub="{SAMPLE_SIZE=10}")
+```
+
+```{r}
+#VARIANCE
+var(samp_dist_sd1)
+#STANDARD ERROR
+sd(samp_dist_sd1)
+```
+The variance and standard error are.
+
+## SAMPLE SIZE=20
+
+```{r}
+samp_dist_sd2=replicate(1000,sd(sample(ToothGrowth$len,20,replace=TRUE)))
+head(samp_dist_sd2)
+```
+```{r}
+#histogram of samp_dist
+hist(samp_dist_sd2,xlab="s.d",ylab="Frequency",main="SAMPLING DISTRIBUTION OF S.D",sub="{SAMPLE_SIZE=20}")
+```
+
+```{r}
+#VARIANCE
+var(samp_dist_sd2)
+#STANDARD ERROR
+sd(samp_dist_sd2)
+```
+The variance and standard deviation are respectively. this is less than the values obtained for sample size=10.
+## SAMPLE SIZE=30
+```{r}
+samp_dist_sd3=replicate(1000,sd(sample(ToothGrowth$len,30,replace=TRUE)))
+head(samp_dist_sd3)
+```
+```{r}
+#histogram of samp_dist
+hist(samp_dist_sd3,xlab="s.d",ylab="Frequency",main="SAMPLING DISTRIBUTION OF S.D",sub="{SAMPLE_SIZE=30}")
+```
+```{r}
+#VARIANCE
+var(samp_dist_sd3)
+#STANDARD ERROR
+sd(samp_dist_sd3)
+```
+The variance and standard deviation are respectively. this is less than the values obtained for sample size=20.
+Therefore, the variance of statistic(standard deviation) reduces with increase in sample size. Hence, it is clear from the result that as the sample size increases the variance decreases. It is known that the variance is inversely proportional to the precision. Hence, it can be concluded that precision increases as sample size increases.
+
+# CONCLUSION
+
+the variance and standard error of the sampling distribution of both mean mean and standard deviation of the focus variable reduced when the sample size increased. hence an increase in sample size increases precision.
